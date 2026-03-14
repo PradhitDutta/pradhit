@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>India's Gas Supply: How a War Exposed a Structural Failure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    /* ── PAGE ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1a18;
+      color: #e8e6df;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── MASTHEAD ── */
+    .masthead {
+      border-bottom: 2px solid #f0ede6;
+      padding: 1rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #1a1a18;
+    }
+    .masthead-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: #888780;
+    }
+    .masthead-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: #5f5e5a;
+    }
+
+    /* ── HERO / INTRO — paper column ── */
+    .intro-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2.5rem 2rem;
+      border-bottom: 1px solid #2c2c24;
+    }
+    .kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #BA7517; margin-bottom: 0.9rem;
+    }
+    .intro-wrap h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 700;
+      line-height: 1.15; letter-spacing: -0.02em;
+      color: #f0ede6; margin-bottom: 1.2rem;
+    }
+    .byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; color: #5f5e5a; letter-spacing: 0.05em;
+      padding-bottom: 1.4rem; border-bottom: 1px solid #2c2c24; margin-bottom: 1.8rem;
+    }
+    .byline span { color: #888780; }
+
+    /* ── ARTICLE SECTIONS ── */
+    .section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 2.5rem 0;
+    }
+    .section h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.35rem; font-weight: 700;
+      color: #f0ede6; margin-bottom: 0.8rem;
+    }
+    .section p {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-weight: 300; font-size: 17px; line-height: 1.85;
+      color: #c8c5be; margin-bottom: 1.2rem;
+    }
+    .pullquote {
+      border-left: 3px solid #BA7517;
+      margin: 1.5rem 0; padding: 0.9rem 1.4rem;
+      background: #22221a;
+    }
+    .pullquote p {
+      font-family: 'Playfair Display', Georgia, serif !important;
+      font-style: italic; font-size: 1.1rem !important;
+      line-height: 1.6 !important; color: #d3d1c7 !important;
+    }
+
+    /* ── DASHBOARD BLOCKS — exact supply_demand_chart.html style ── */
+    .db-outer {
+      padding: 2.5rem 2.5rem 0;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .db {
+      background: #1a1a18;
+      padding: 2rem 0 2.5rem;
+      border-top: 1px solid #2c2c24;
+      border-bottom: 1px solid #2c2c24;
+      margin-bottom: 0;
+    }
+    .db-inner {
+      /* matches the supply_demand_chart.html body width feel */
+    }
+    .db-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #5f5e5a; margin-bottom: 0.5rem;
+    }
+    .db h3 {
+      font-size: 18px; font-weight: 500; color: #f0ede6; margin-bottom: 0.3rem;
+    }
+    .db-subtitle {
+      font-size: 12px; color: #888780; margin-bottom: 1.5rem;
+    }
+
+    /* cards — identical to supply_demand_chart */
+    .cards {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 10px; margin-bottom: 1.5rem;
+    }
+    .card { background: #26261f; border-radius: 8px; padding: 0.85rem 1rem; }
+    .card-label { font-size: 11px; color: #888780; margin-bottom: 4px; }
+    .card-value { font-size: 18px; font-weight: 500; color: #f0ede6; margin-bottom: 4px; }
+    .card-sub   { font-size: 11px; color: #5f5e5a; }
+
+    /* tabs — identical */
+    .tabs { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .tab {
+      font-size: 12px; padding: 5px 14px; border-radius: 8px;
+      border: 0.5px solid #3a3a32; cursor: pointer;
+      background: #26261f; color: #888780; font-weight: 400;
+      transition: all 0.15s;
+    }
+    .tab.active { background: #BA7517; color: #fff; font-weight: 500; border-color: #BA7517; }
+
+    /* legend — identical */
+    .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 10px; font-size: 12px; color: #888780; }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+    .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+    /* chart wrap — identical */
+    .chart-wrap { position: relative; width: 100%; height: 360px; margin-bottom: 1.5rem; }
+
+    /* table — identical */
+    table { width: 100%; font-size: 11px; border-collapse: collapse; color: #888780; }
+    th {
+      text-align: right; padding: 6px 8px; font-weight: 500;
+      color: #d3d1c7; border-bottom: 0.5px solid #3a3a32;
+    }
+    th:first-child { text-align: left; }
+    td { text-align: right; padding: 5px 8px; border-bottom: 0.5px solid #2c2c24; }
+    td:first-child { text-align: left; font-weight: 500; color: #d3d1c7; }
+    .note { font-size: 11px; color: #5f5e5a; margin-top: 10px; }
+
+    /* survival meters */
+    .meter-row { margin-bottom: 1rem; }
+    .meter-lbl-row {
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: #888780; margin-bottom: 5px;
+    }
+    .meter-track { width: 100%; height: 24px; background: #26261f; border-radius: 4px; overflow: hidden; }
+    .meter-fill {
+      height: 100%; display: flex; align-items: center; padding: 0 10px;
+      font-size: 11px; font-weight: 500;
+      transition: width 1.5s cubic-bezier(.4,0,.2,1); white-space: nowrap;
+    }
+    .meter-axis {
+      display: flex; justify-content: space-between;
+      font-size: 10px; color: #5f5e5a; margin-top: 4px;
+    }
+
+    /* terminal table inside db */
+    .tt-wrap { overflow-x: auto; }
+    .tt { width: 100%; font-size: 11px; border-collapse: collapse; color: #888780; }
+    .tt th {
+      text-align: right; padding: 6px 8px; font-weight: 500;
+      color: #d3d1c7; border-bottom: 0.5px solid #3a3a32;
+      background: #1a1a18;
+    }
+    .tt th:first-child { text-align: left; }
+    .tt td { text-align: right; padding: 7px 8px; border-bottom: 0.5px solid #2c2c24; }
+    .tt td:first-child { text-align: left; font-weight: 500; color: #d3d1c7; }
+    .tt tr:hover td { background: #22221a; }
+    .upip { display: inline-block; height: 5px; border-radius: 1px; vertical-align: middle; margin-right: 5px; }
+
+    /* footer */
+    footer {
+      max-width: 960px; margin: 0 auto;
+      padding: 2rem 2.5rem 3rem;
+      font-size: 11px; color: #5f5e5a;
+      font-family: 'JetBrains Mono', monospace; line-height: 1.8;
+      border-top: 1px solid #2c2c24; margin-top: 2rem;
+    }
+    footer a { color: #BA7517; text-decoration: none; }
+    footer strong { color: #888780; font-weight: 500; }
+
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .intro-wrap, .section, .db-outer { padding-left: 1.2rem; padding-right: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <span class="masthead-title">Energy Security · India</span>
+  <span class="masthead-date">Updated · March 2026</span>
+</header>
+
+
+<!-- INTRO -->
+<div class="intro-wrap">
+  <p class="kicker">Energy Security · India</p>
+  <h1>India's gas supply: how a war exposed a structural failure</h1>
+  <p class="byline">
+    A ground-up analysis &nbsp;·&nbsp;
+    <span>Petroleum Planning &amp; Analysis Cell</span> &nbsp;·&nbsp;
+    PLL Annual Report 2024-25
+  </p>
+  <p style="font-family:'Source Serif 4',Georgia,serif;font-weight:300;font-size:17px;line-height:1.85;color:#c8c5be;margin-bottom:1.2rem;">
+    On March 12, 2026, two days after the U.S.-Israeli conflict with Iran closed the Strait of Hormuz,
+    India's Oil Minister Hardeep Singh Puri confirmed to parliament what the supply chain data had
+    been quietly signalling for years: India had no buffer. With roughly 60% of its LPG arriving from
+    Gulf countries now cut off, the government invoked emergency powers, ordered refiners to maximise
+    production, and scrambled to secure replacement cargoes from the United States, Norway, Canada,
+    and Russia. The problem was not finding new suppliers. The problem was time.
+  </p>
+  <p style="font-family:'Source Serif 4',Georgia,serif;font-weight:300;font-size:17px;line-height:1.85;color:#c8c5be;margin-bottom:1.2rem;">
+    A Gulf cargo reaches India's western terminals in 8 to 12 days. A replacement from the US takes
+    30 to 40 days. Norway is 35 to 42. Canada is 38 to 45. Even Russia, the fastest emergency
+    alternative via Arctic or Pacific routes, takes 20 to 28 days. India's domestic production, on
+    its own, can sustain the country for approximately <strong style="color:#e74c3c;">27 days</strong>
+    before rationing begins. The gap between when supply runs out and when replacement cargo arrives is
+    not a planning scenario. Right now, it is the situation.
+  </p>
+  <p style="font-family:'Source Serif 4',Georgia,serif;font-weight:300;font-size:17px;line-height:1.85;color:#c8c5be;margin-bottom:0;">
+    This report traces how India arrived here. According to the Petroleum Planning and Analysis Cell (PPAC),
+    India consumed <strong style="color:#f0ede6;">30.855 MMT of LPG</strong> in the most recent full year,
+    or 84,500 tonnes every single day. Domestic production covers only
+    <strong style="color:#f0ede6;">39%</strong> of that. The remaining 18.796 MMT,
+    <strong style="color:#E8820C;">61% of total consumption</strong>, arrives by ship through just six
+    coastal terminals, with no storage buffer and no strategic reserve. The ₹10 surcharge on a bowl
+    of noodles, the PG mess with a shrinking menu, the restaurant that quietly closed: these are not
+    isolated events. They are the visible edge of a vulnerability that runs very deep.
+  </p>
+</div>
+
+<!-- ═══════════ SECTION 1 TEXT ═══════════ -->
+<div class="section" style="padding-top:2.5rem;">
+  <h2>The basic picture</h2>
+  <p>From April through January, imports must cover a gap of 1,500 to 1,700 thousand MT per month
+  that domestic production simply cannot fill. This is not a seasonal shortfall. It is structural, baked into the supply chain every month of every year.</p>
+</div>
+
+<!-- ═══════════ DASHBOARD 01 ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">FY 2024–25 · LPG Supply &amp; Demand</div>
+  <h3>Domestic Production vs. Import Dependency</h3>
+  <p class="db-subtitle">Monthly volumes in '000 MT · April – January 2024–25</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Production</div>
+      <div class="card-value">10,642</div>
+      <div class="card-sub" id="prodGrowth1"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Imports</div>
+      <div class="card-value">18,795</div>
+      <div class="card-sub" id="impGrowth1"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Consumption</div>
+      <div class="card-value">28,034</div>
+      <div class="card-sub" id="conGrowth1"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Net Balance</div>
+      <div class="card-value" id="cumNet1"></div>
+      <div class="card-sub">Apr – Jan</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab1-stack"  onclick="setTab1('stack')">Stack</button>
+    <button class="tab"        id="tab1-growth" onclick="setTab1('growth')">Growth %</button>
+    <button class="tab"        id="tab1-pct"    onclick="setTab1('pct')">Mix %</button>
+  </div>
+
+  <div class="legend" id="leg1-stack">
+    <span><span class="swatch" style="background:#BA7517"></span>Production</span>
+    <span><span class="swatch" style="background:#E8820C"></span>Imports</span>
+    <span><span class="swatch" style="background:#F5C842"></span>Surplus</span>
+    <span><span class="swatch" style="background:#6B1A1A"></span>Deficit</span>
+  </div>
+  <div class="legend" id="leg1-growth" style="display:none">
+    <span><span class="swatch" style="background:#BA7517"></span>Production</span>
+    <span><span class="swatch" style="background:#E8820C"></span>Imports</span>
+    <span><span class="swatch" style="background:#5F8DC4"></span>Consumption</span>
+  </div>
+  <div class="legend" id="leg1-pct" style="display:none">
+    <span><span class="swatch" style="background:#BA7517"></span>Production %</span>
+    <span><span class="swatch" style="background:#E8820C"></span>Imports %</span>
+  </div>
+
+  <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th style="text-align:left">Month</th>
+        <th>Production</th><th>MoM</th>
+        <th>Imports</th><th>MoM</th>
+        <th>Consumption</th><th>MoM</th>
+        <th>Net</th><th>Prod %</th><th>Import %</th>
+      </tr></thead>
+      <tbody id="table1"></tbody>
+    </table>
+  </div>
+  <p class="note">Net = prod + imp − cons · MoM = month-on-month</p>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 2 TEXT ═══════════ -->
+<div class="section">
+  <h2>Six terminals. That is it.</h2>
+  <p>All 18.8 MMT of annual LPG imports flow through just six coastal terminals.
+  Dahej alone accounts for 41% of total capacity, and as of FY2024-25 it is running at
+  <strong style="color:#f0ede6;">96.6% utilisation</strong>, hitting 110% during Q1 2024's
+  summer peak. There is almost no slack at the top of the system.</p>
+  <div class="pullquote">
+    <p>Any disruption at Dahej alone would remove 41% of India's entire LPG import capacity
+    overnight. The 2022-23 utilisation trough of 78% was temporary, driven by high spot prices
+    rather than structural change. By FY2024-25, Dahej was back near full capacity.</p>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD 02 ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Import Infrastructure · LNG Terminals</div>
+  <h3>Regasification Capacity &amp; Utilisation by Terminal</h3>
+  <p class="db-subtitle">Nameplate capacity (MMTPA) · historical utilisation rates · six operating terminals</p>
+
+  <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card">
+      <div class="card-label">Import Capacity</div>
+      <div class="card-value" style="color:#E8820C">42.7 MMTPA</div>
+      <div class="card-sub">6 terminals</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Dahej FY25</div>
+      <div class="card-value" style="color:#2ecc71">96.6%</div>
+      <div class="card-sub">Q1 peak: 110%</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pipeline</div>
+      <div class="card-value" style="color:#5f5e5a">+22 MMTPA</div>
+      <div class="card-sub">5 under construction</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab2-cap"   onclick="setTab2('cap')">Capacity</button>
+    <button class="tab"        id="tab2-trend" onclick="setTab2('trend')">Dahej</button>
+    <button class="tab"        id="tab2-table" onclick="setTab2('table')">Table</button>
+  </div>
+
+  <div id="pnl2-cap">
+    <div class="legend">
+      <span><span class="swatch" style="background:#BA7517"></span>Capacity (MMTPA)</span>
+      <span><span class="swatch" style="background:#5F8DC4"></span>2022–23</span>
+      <span><span class="swatch" style="background:#2ecc71"></span>FY25</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart2a"></canvas></div>
+  </div>
+  <div id="pnl2-trend" style="display:none">
+    <div class="legend">
+      <span><span class="swatch" style="background:#BA7517"></span>Utilisation %</span>
+      <span><span class="swatch" style="background:#2ecc71"></span>FY2024-25</span>
+      <span><span class="swatch" style="background:transparent;border:1px dashed #F5C842"></span>100% nameplate</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart2b"></canvas></div>
+  </div>
+  <div id="pnl2-table" style="display:none">
+    <div class="tt-wrap">
+      <table class="tt">
+        <thead><tr>
+          <th>Terminal</th><th>State</th><th>Cap (MMTPA)</th>
+          <th>2017-18</th><th>2019-20</th><th>2021-22</th><th>2022-23</th><th>FY2024-25</th>
+        </tr></thead>
+        <tbody id="termTable"></tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:8px">● >80%  ● 50–80%  ● <50% utilisation</p>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 3 TEXT ═══════════ -->
+<div class="section">
+  <h2>The monthly balance</h2>
+  <p>Each month, total supply runs just barely ahead of consumption. The cumulative ten-month
+  surplus is only 1.4 MMT, which works out to roughly 16 days of full consumption. And it is not sitting in tanks anywhere.
+  It is a flow residual, dissipated across the supply chain the moment it is created.</p>
+</div>
+
+<!-- ═══════════ DASHBOARD 03 ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Monthly Supply Balance · FY 2024–25</div>
+  <h3>Net LPG Surplus / Deficit by Month</h3>
+  <p class="db-subtitle">Stacked production + imports vs. consumption · flow residual analysis</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tab3-stack" onclick="setTab3('stack')">Stack</button>
+    <button class="tab"        id="tab3-net"   onclick="setTab3('net')">Net</button>
+    <button class="tab"        id="tab3-cum"   onclick="setTab3('cum')">Cumulative</button>
+  </div>
+
+  <div id="pnl3-stack">
+    <div class="legend">
+      <span><span class="swatch" style="background:#BA7517"></span>Production</span>
+      <span><span class="swatch" style="background:#E8820C"></span>Imports</span>
+      <span><span class="swatch" style="background:#F5C842"></span>Surplus</span>
+      <span><span class="swatch" style="background:#6B1A1A"></span>Deficit</span>
+      <span><span class="swatch" style="background:transparent;border:1px dashed rgba(231,76,60,0.7)"></span>Consumption</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart3a"></canvas></div>
+  </div>
+  <div id="pnl3-net" style="display:none">
+    <div class="legend">
+      <span><span class="swatch" style="background:rgba(46,204,113,0.8)"></span>Surplus</span>
+      <span><span class="swatch" style="background:rgba(192,57,43,0.8)"></span>Deficit</span>
+    </div>
+    <div class="chart-wrap" style="height:280px"><canvas id="chart3b"></canvas></div>
+  </div>
+  <div id="pnl3-cum" style="display:none">
+    <div class="legend">
+      <span><span class="swatch" style="background:#F5C842"></span>Cumulative surplus</span>
+    </div>
+    <div class="chart-wrap" style="height:260px"><canvas id="chart3c"></canvas></div>
+  </div>
+
+  <p class="note">1.4 MMT surplus is a flow residual — not stored. Cannot be drawn on in an emergency.</p>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 4 TEXT ═══════════ -->
+<div class="section">
+  <h2>No imports. How long can India actually last?</h2>
+  <p>Using PPAC annual figures of 30.855 MMT consumed and 18.796 MMT imported, with zero storage, the 1.4 MMT flow surplus is the only buffer.
+  Domestic production alone covers just 11 to 12 days of consumption per month.</p>
+  <p>Using the buffer to bridge the shortfall, India could sustain full consumption for
+  <strong style="color:#f0ede6;">approximately 27 days</strong>. After that, hard rationing at
+  just <strong style="color:#E8820C;">39% of current demand</strong>, indefinitely, until imports
+  resume. The IEA recommends a 90-day strategic reserve. India holds effectively zero.</p>
+  <div class="pullquote">
+    <p>A 30-day reserve requires 2.54 MMT of dedicated storage. A 90-day IEA reserve requires
+    7.61 MMT. Neither exists anywhere in India's LPG supply chain today.</p>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD 04 ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Supply Security · Disruption Modelling</div>
+  <h3>Days of Cover Under Import Disruption Scenarios</h3>
+  <p class="db-subtitle">Three scenarios: full imports / 50% cut / zero imports · flow-through model, no storage assumed</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Supply Runway</div>
+      <div class="card-value" style="color:#e74c3c">~27 days</div>
+      <div class="card-sub">if imports stop</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Production Cover</div>
+      <div class="card-value" style="color:#e74c3c">39%</div>
+      <div class="card-sub">domestic only</div>
+    </div>
+    <div class="card">
+      <div class="card-label">IEA Standard</div>
+      <div class="card-value" style="color:#5f5e5a">90 days</div>
+      <div class="card-sub">India holds: 0</div>
+    </div>
+    <div class="card">
+      <div class="card-label">30-day Reserve</div>
+      <div class="card-value" style="color:#E8820C">2.54 MMT</div>
+      <div class="card-sub">storage needed</div>
+    </div>
+  </div>
+
+  <!-- survival meters -->
+  <p style="font-size:12px;color:#888780;margin-bottom:0.8rem">Runway vs IEA 90-day benchmark</p>
+  <div class="meter-row">
+    <div class="meter-lbl-row">
+      <span>Normal</span>
+      <span style="color:#F5C842">~34 days avg</span>
+    </div>
+    <div class="meter-track"><div class="meter-fill" id="mA" style="width:0%;background:#BA7517;color:#fff">34d</div></div>
+  </div>
+  <div class="meter-row">
+    <div class="meter-lbl-row">
+      <span>50% cut</span>
+      <span style="color:#E8820C">~20 days avg</span>
+    </div>
+    <div class="meter-track"><div class="meter-fill" id="mB" style="width:0%;background:#E8820C;color:#1a1a18">20d</div></div>
+  </div>
+  <div class="meter-row">
+    <div class="meter-lbl-row">
+      <span>No imports</span>
+      <span style="color:#e74c3c">27 days → 39% rationing</span>
+    </div>
+    <div class="meter-track"><div class="meter-fill" id="mC" style="width:0%;background:#c0392b;color:#fff">27d</div></div>
+  </div>
+  <div class="meter-axis" style="margin-bottom:1.5rem">
+    <span>0d</span><span>10d</span><span>20d</span><span>30d</span>
+    <span style="color:#BA7517">IEA min → 90d</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab4-days"  onclick="setTab4('days')">Days of Cover</button>
+    <button class="tab"        id="tab4-cliff" onclick="setTab4('cliff')">Supply Cliff</button>
+  </div>
+
+  <div id="pnl4-days">
+    <div class="legend">
+      <span><span class="swatch" style="background:#BA7517"></span>Normal</span>
+      <span><span class="swatch" style="background:#E8820C"></span>50% cut</span>
+      <span><span class="swatch" style="background:#c0392b"></span>No imports</span>
+      <span><span class="swatch" style="background:transparent;border:1px dashed #F5C842"></span>30-day IEA min</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart4a"></canvas></div>
+  </div>
+  <div id="pnl4-cliff" style="display:none">
+    <div class="legend">
+      <span><span class="swatch" style="background:#2ecc71"></span>Production</span>
+      <span><span class="swatch" style="background:#E8820C"></span>Buffer</span>
+      <span><span class="swatch" style="background:rgba(192,57,43,0.75)"></span>Unmet</span>
+      <span><span class="swatch" style="background:transparent;border:1px dashed rgba(245,200,66,0.5)"></span>Full demand</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart4b"></canvas></div>
+  </div>
+
+  <p class="note">Flow-through only · no storage assumed · buffer exhausted day 27</p>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 5: PRICE ═══════════ -->
+<div class="section" style="padding-top:2.5rem;">
+  <h2>What it costs right now</h2>
+  <p>Commercial cylinder prices in Bangalore have risen by <strong style="color:#E8820C;">₹144 in the current cycle</strong> — the direct pass-through of tighter supply hitting an unsubsidised, fully market-linked price.</p>
+</div>
+
+<!-- ═══════════ DASHBOARD 05: PRICE — two cards only ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div style="text-align:center">
+  <div class="db-section-label">Retail Prices · Bangalore · March 2026</div>
+  <h3>LPG Cylinder Prices — Domestic vs. Commercial</h3>
+  <p class="db-subtitle">Government-regulated domestic vs. unsubsidised commercial · goodreturns.in</p>
+  </div>
+
+  <div class="cards" style="grid-template-columns:repeat(2,1fr);max-width:480px;margin-left:auto;margin-right:auto">
+    <div class="card">
+      <div class="card-label">Domestic · 14.2 kg</div>
+      <div class="card-value">₹915.50</div>
+      <div class="card-sub" style="color:#E8820C">▲ +₹60.00</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Commercial · 19 kg</div>
+      <div class="card-value" style="color:#E8820C">₹1,958.00</div>
+      <div class="card-sub" style="color:#E8820C">▲ +₹144.00</div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:0.8rem">Source: goodreturns.in · Domestic cylinder is government-subsidised; commercial is fully market-linked.</p>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 6: SOURCING RISK ═══════════ -->
+<div class="section" style="padding-top:2.5rem;">
+  <h2>The geography of the crisis</h2>
+  <p>The report so far has focused on terminal concentration as a chokepoint, but the upstream
+  geography is the deeper vulnerability. Until March 2026, roughly 60% of India's LPG arrived from
+  Gulf countries: Saudi Arabia, Kuwait, and the UAE. The remaining share came primarily from the
+  United States, with smaller volumes from Qatar, Nigeria, and spot markets.</p>
+  <p>Following the U.S.-Israeli conflict with Iran, the Strait of Hormuz closed, cutting India's
+  primary supply corridor overnight. Oil Minister Hardeep Singh Puri confirmed to parliament on
+  March 12, 2026 that India was urgently diversifying, securing new cargoes from the
+  <strong style="color:#f0ede6;">United States, Norway, Canada, and Russia</strong>, in addition
+  to whatever Gulf supply remained accessible. The government invoked emergency powers ordering
+  refiners to maximise LPG production and restrict industrial sales, while the environment ministry
+  permitted biomass, kerosene, and coal as temporary alternate fuels for the hospitality sector.</p>
+  <p>The transit time problem makes this crisis particularly acute. A Gulf cargo reaches India's
+  western terminals in 8 to 12 days. A replacement cargo from the US takes 30 to 40 days. Norway is
+  35 to 42 days. Canada is 38 to 45 days. Russia via the Arctic or Pacific route takes 20 to 28 days.
+  In other words, even if every alternative cargo was contracted on day one of the disruption, the
+  earliest substantial relief could arrive is three to six weeks later, well past the 27-day
+  domestic production runway.</p>
+  <div class="pullquote">
+    <p>When Hormuz closed, India's 27-day runway and a 30 to 40 day US transit time collided.
+    The gap between when domestic supply runs out and when replacement cargo arrives is the
+    precise definition of a humanitarian energy crisis. The minister called it "consumer anxiety."
+    The mathematics call it a structural failure.</p>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD 06: SOURCING ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Supply Geography &amp; Transit Risk · March 2026</div>
+  <h3>LPG Import Origins &amp; Voyage Times to Indian Terminals</h3>
+  <p class="db-subtitle">Pre-crisis sourcing share vs. emergency diversification · estimated voyage days to west-coast terminals</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Gulf — pre-crisis share</div>
+      <div class="card-value" style="color:#e74c3c">~60%</div>
+      <div class="card-sub" style="color:#e74c3c">Hormuz closed · Mar 2026</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Fastest emergency source</div>
+      <div class="card-value" style="color:#E8820C">20–28 days</div>
+      <div class="card-sub">Russia · Arctic / Pacific route</div>
+    </div>
+    <div class="card">
+      <div class="card-label">US · Norway · Canada</div>
+      <div class="card-value" style="color:#5F8DC4">30–45 days</div>
+      <div class="card-sub">Emergency contracts underway</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Domestic supply runway</div>
+      <div class="card-value" style="color:#e74c3c">27 days</div>
+      <div class="card-sub">Before rationing begins</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab6-transit" onclick="setTab6('transit')">Transit Times</button>
+    <button class="tab" id="tab6-share" onclick="setTab6('share')">Supply Mix</button>
+    <button class="tab" id="tab6-gap" onclick="setTab6('gap')">Arrival Gap</button>
+  </div>
+
+  <!-- TRANSIT TIMES PANEL -->
+  <div id="pnl6-transit">
+    <div class="legend" style="margin-bottom:10px">
+      <span><span class="swatch" style="background:#e74c3c"></span>Disrupted</span>
+      <span><span class="swatch" style="background:#888780"></span>Partial / Available</span>
+      <span><span class="swatch" style="background:#E8820C"></span>Securing — emergency</span>
+      <span><span class="swatch" style="background:transparent;border:1px dashed #e74c3c"></span>27-day runway</span>
+    </div>
+    <div class="chart-wrap" style="height:320px"><canvas id="chart6transit"></canvas></div>
+    <p class="note" style="margin-top:10px">Bars show minimum–maximum voyage days (range). Dashed red line = 27-day domestic supply runway. Cargo must arrive before this line to avoid rationing. Source: Reuters Mar 12, 2026 · industry voyage estimates.</p>
+  </div>
+
+  <!-- SUPPLY MIX PANEL -->
+  <div id="pnl6-share" style="display:none">
+    <div class="legend">
+      <span><span class="swatch" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)"></span>Pre-crisis share</span>
+      <span><span class="swatch" style="background:#5F8DC4"></span>Emergency target share</span>
+      <span style="font-size:10px;color:#5f5e5a;font-family:'JetBrains Mono',monospace">Gulf disrupted · emergency diversification underway</span>
+    </div>
+    <div class="chart-wrap" style="height:280px"><canvas id="chart6b"></canvas></div>
+  </div>
+
+  <!-- ARRIVAL GAP PANEL -->
+  <div id="pnl6-gap" style="display:none">
+    <div class="legend">
+      <span><span class="swatch" style="background:#2ecc71"></span>Domestic production</span>
+      <span><span class="swatch" style="background:#E8820C"></span>Buffer drawn</span>
+      <span><span class="swatch" style="background:rgba(192,57,43,0.75)"></span>Unmet demand</span>
+      <span><span class="swatch" style="background:rgba(46,204,113,0.5)"></span>Russia imports (est.)</span>
+      <span><span class="swatch" style="background:rgba(95,141,196,0.5)"></span>US imports (est.)</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart6c"></canvas></div>
+    <p class="note">Emergency contracts placed day 1. Russia: 24-day transit. US / Norway: 35-day transit. Buffer exhausted day 27.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════ SECTION 6B: LIVE VESSEL INTELLIGENCE ═══════════ -->
+<div class="section" style="padding-top:2.5rem;">
+  <h2>Live from the strait: what the tankers are doing right now</h2>
+  <p>A ShipXplorer vessel tracker screenshot taken at 06:45 UTC on March 14, 2026,
+  two days after the Hormuz closure, shows five Indian-flagged LPG and tanker vessels
+  clustered in the UAE / Gulf of Oman zone. Their movements tell the story more clearly
+  than any press release.</p>
+  <p>The most telling vessel is <strong style="color:#f0ede6;">BW ELM</strong>, routing
+  Fujairah to Ras Tanura. Fujairah sits on the Gulf of Oman side of the Strait, and it is the
+  primary non-Hormuz transshipment hub that vessels use precisely when the strait is impassable.
+  A vessel calling at Fujairah and then heading to Ras Tanura, Saudi Arabia's main LPG export
+  terminal, is executing the Cape bypass manoeuvre in real time. This is what emergency
+  re-routing looks like on a map.</p>
+  <p><strong style="color:#f0ede6;">DESH VAIBHAV</strong>, at 333m × 60m, is not an LPG carrier
+  at all. Those dimensions identify it as a
+  <strong style="color:#5F8DC4;">Q-Flex class LNG carrier</strong>, likely carrying around 72,000 MT
+  of liquefied natural gas to Vadinar's LNG terminal. Its presence here is still significant,
+  signalling that India's LNG supply chain is simultaneously disrupted, but it should not be
+  counted in the LPG tally.</p>
+  <p>The four genuine LPG vessels — BW ELM, JAG VASANT, PINE GAS, and BW LOYALTY — are all
+  Very Large Gas Carriers (VLGCs) with capacities of 82,000 to 84,000 CBM each. At an LPG density
+  of around 0.485 MT/CBM, each vessel carries roughly <strong style="color:#f0ede6;">40,000 to 41,000 MT
+  of LPG</strong>. Combined, the four vessels represent approximately
+  <strong style="color:#E8820C;">162,000 MT</strong>, equivalent to
+  <strong style="color:#f0ede6;">1.78 days</strong> of India's total national LPG consumption,
+  or about 11.4 million domestic cylinders. That is the physical cargo sitting in this one
+  patch of sea, stalled or rerouted.</p>
+  <div class="pullquote">
+    <p>BW ELM at Fujairah is not an anomaly. It is the entire report in a single data point:
+    India's LPG supply chain, forced off its normal routing, burning extra days and dollars
+    to get around a closed strait, with no buffer to absorb the delay on the receiving end.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SCREENSHOT ═══════════ -->
+<div class="db-outer">
+  <div style="margin-bottom:0.6rem">
+    <img src="ss.png" alt="ShipXplorer vessel tracker screenshot — Indian-flagged gas carriers in the Hormuz / Gulf of Oman zone, 06:45 UTC 14 Mar 2026"
+      style="width:100%;border-radius:6px;border:1px solid #2c2c24;display:block;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5f5e5a;margin-top:6px;">
+      ShipXplorer AIS screenshot · 06:45 UTC · 14 Mar 2026 · Gulf of Oman / Hormuz zone
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD 06B: LIVE VESSELS ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Live Vessel Tracking · ShipXplorer · 06:45 UTC · 14 Mar 2026</div>
+  <h3>Indian-Flagged Gas Carriers — Gulf of Oman / Hormuz Zone</h3>
+  <p class="db-subtitle">AIS positions as of screenshot · five vessels tracked · cargo capacity estimated from LOA × beam dimensions</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Vessels tracked</div>
+      <div class="card-value">5</div>
+      <div class="card-sub">Indian-flagged · Hormuz zone</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cape bypass signal</div>
+      <div class="card-value" style="color:#E8820C">BW ELM</div>
+      <div class="card-sub">Fujairah → Ras Tanura</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Inbound India</div>
+      <div class="card-value" style="color:#BA7517">DESH VAIBHAV</div>
+      <div class="card-sub">→ Vadinar, Gujarat</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Status</div>
+      <div class="card-value" style="color:#e74c3c">Disrupted</div>
+      <div class="card-sub">Normal routing unavailable</div>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th style="text-align:left">Vessel</th>
+        <th style="text-align:left">Last Route</th>
+        <th style="text-align:right">Dimensions</th>
+        <th style="text-align:right">Type</th>
+        <th style="text-align:right">Capacity</th>
+        <th style="text-align:right">Est. Cargo</th>
+        <th style="text-align:right">= India days</th>
+        <th style="text-align:left">Signal</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:500;color:#d3d1c7">BW ELM</td>
+          <td style="color:#E8820C">Fujairah → Ras Tanura</td>
+          <td style="text-align:right;color:#888780">225m × 36m</td>
+          <td style="text-align:right;color:#BA7517">VLGC</td>
+          <td style="text-align:right;color:#888780">84,000 CBM</td>
+          <td style="text-align:right;color:#f0ede6">~40,740 MT</td>
+          <td style="text-align:right;color:#E8820C">0.45d</td>
+          <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#E8820C">CAPE BYPASS</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500;color:#d3d1c7">DESH VAIBHAV</td>
+          <td style="color:#BA7517">N/A → Vadinar India</td>
+          <td style="text-align:right;color:#888780">333m × 60m</td>
+          <td style="text-align:right;color:#5F8DC4">LNG Carrier</td>
+          <td style="text-align:right;color:#888780">~160,000 CBM</td>
+          <td style="text-align:right;color:#5F8DC4">~72,000 MT LNG</td>
+          <td style="text-align:right;color:#5f5e5a">LNG ≠ LPG</td>
+          <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#BA7517">INBOUND · HOLDING?</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500;color:#d3d1c7">JAG VASANT</td>
+          <td style="color:#888780">Kandla → IN IXY</td>
+          <td style="text-align:right;color:#888780">230m × 36m</td>
+          <td style="text-align:right;color:#BA7517">VLGC</td>
+          <td style="text-align:right;color:#888780">84,000 CBM</td>
+          <td style="text-align:right;color:#f0ede6">~40,740 MT</td>
+          <td style="text-align:right;color:#E8820C">0.45d</td>
+          <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888780">POSITION STALE</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500;color:#d3d1c7">PINE GAS</td>
+          <td style="color:#888780">N/A → All Crew Indian</td>
+          <td style="text-align:right;color:#888780">215m × 36m</td>
+          <td style="text-align:right;color:#BA7517">VLGC</td>
+          <td style="text-align:right;color:#888780">82,000 CBM</td>
+          <td style="text-align:right;color:#f0ede6">~39,770 MT</td>
+          <td style="text-align:right;color:#E8820C">0.44d</td>
+          <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5f5e5a">NO DEST. FILED</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500;color:#d3d1c7">BW LOYALTY</td>
+          <td style="color:#888780">Khalifa → Rashid Dubai</td>
+          <td style="text-align:right;color:#888780">226m × 37m</td>
+          <td style="text-align:right;color:#BA7517">VLGC</td>
+          <td style="text-align:right;color:#888780">84,000 CBM</td>
+          <td style="text-align:right;color:#f0ede6">~40,740 MT</td>
+          <td style="text-align:right;color:#E8820C">0.45d</td>
+          <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5f5e5a">LOCAL UAE MOVE</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cargo summary cards -->
+  <div class="cards" style="margin-top:1.2rem;grid-template-columns:repeat(4,1fr)">
+    <div class="card">
+      <div class="card-label">LPG vessels (4 VLGCs)</div>
+      <div class="card-value" style="color:#E8820C">~162,000 MT</div>
+      <div class="card-sub">combined LPG cargo est.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">= India consumption</div>
+      <div class="card-value" style="color:#f0ede6">1.78 days</div>
+      <div class="card-sub">of national daily demand</div>
+    </div>
+    <div class="card">
+      <div class="card-label">= Import flow</div>
+      <div class="card-value" style="color:#BA7517">3.1 days</div>
+      <div class="card-sub">of normal import volume</div>
+    </div>
+    <div class="card">
+      <div class="card-label">= Cylinders</div>
+      <div class="card-value" style="color:#f0ede6">~11.4M</div>
+      <div class="card-sub">domestic 14.2 kg cylinders</div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:0.8rem">Cargo estimates: VLGC capacity 82,000–84,000 CBM × LPG density ~0.485 MT/CBM. <strong style="color:#5F8DC4">DESH VAIBHAV</strong> (333m × 60m) excluded from LPG total — dimensions confirm LNG carrier (Q-Flex class), not LPG; Vadinar has both LNG and LPG terminals. Not all vessels may be fully laden. Source: ShipXplorer 06:45 UTC 14 Mar 2026 · industry CBM references.</p>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 7: PEER COMPARISON ═══════════ -->
+<div class="section" style="padding-top:2.5rem;">
+  <h2>How does India compare? The peer benchmark problem.</h2>
+  <p>The IEA's 90-day strategic reserve standard is often cited, but it was designed for
+  oil-importing economies with functioning reserve infrastructure. For LPG specifically, the
+  more instructive comparisons are India's Asian peers: Japan, South Korea, and China, all of
+  which are similarly import-dependent but have built very different buffer architectures.</p>
+  <p>Japan maintains roughly 50 days of LPG reserves through a combination of government-mandated
+  industry storage and underground cavern facilities. South Korea operates a national LPG reserve
+  of around 40 days through KNOC (Korea National Oil Corporation). China, despite being the
+  world's largest LPG importer, holds strategic and commercial inventories equivalent to 30 to 45
+  days of consumption. India holds effectively zero, relying entirely on pipeline flow and
+  tanker schedules to meet daily demand. This is not a developing-economy baseline. It is an
+  outlier even among emerging markets.</p>
+  <div class="pullquote">
+    <p>India's reserve position is not just below the IEA standard. It is an outlier among
+    all major LPG-importing economies in Asia. Japan, South Korea, and China all hold
+    meaningful strategic buffers. India holds none.</p>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD 07: PEER COMPARISON ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Strategic Reserve Comparison · Asia–Pacific</div>
+  <h3>LPG Strategic Reserve Cover — India vs. Peer Economies</h3>
+  <p class="db-subtitle">Days of consumption held in national / government-mandated reserve · approximate figures</p>
+
+  <div class="cards" style="grid-template-columns:repeat(4,1fr)">
+    <div class="card">
+      <div class="card-label">Japan</div>
+      <div class="card-value" style="color:#2ecc71">~50 days</div>
+      <div class="card-sub">Cavern + industry stock</div>
+    </div>
+    <div class="card">
+      <div class="card-label">South Korea</div>
+      <div class="card-value" style="color:#2ecc71">~40 days</div>
+      <div class="card-sub">KNOC reserves</div>
+    </div>
+    <div class="card">
+      <div class="card-label">China</div>
+      <div class="card-value" style="color:#E8820C">~35 days</div>
+      <div class="card-sub">Strategic + commercial</div>
+    </div>
+    <div class="card">
+      <div class="card-label">India</div>
+      <div class="card-value" style="color:#e74c3c">~0 days</div>
+      <div class="card-sub">Flow-through only</div>
+    </div>
+  </div>
+
+  <div class="legend" style="margin-bottom:10px">
+    <span><span class="swatch" style="background:#2ecc71"></span>Adequate reserve</span>
+    <span><span class="swatch" style="background:#E8820C"></span>Partial reserve</span>
+    <span><span class="swatch" style="background:#e74c3c"></span>No reserve</span>
+    <span><span class="swatch" style="background:transparent;border:1px dashed #F5C842"></span>IEA 90-day standard</span>
+  </div>
+  <div class="chart-wrap" style="height:300px"><canvas id="chart7a"></canvas></div>
+  <p class="note">Figures are approximate from public industry sources and government reports. Japan and South Korea figures include government-mandated industry obligations.</p>
+</div>
+</div>
+
+<!-- ═══════════ SECTION 8: TERMINAL PIPELINE & POLICY ═══════════ -->
+<div class="section" style="padding-top:2.5rem;">
+  <h2>What is being done — and how much will it help?</h2>
+  <p>Dashboard 2 noted five terminals under construction, adding 22 MMTPA of nameplate capacity.
+  These include the Chhara LNG terminal in Gujarat (5 MMTPA, Tortoise Energy), the Jaigarh
+  terminal in Maharashtra (4 MMTPA), the Kamarajar Port terminal in Tamil Nadu (5 MMTPA), and
+  the Ennore expansion. Most are expected to come online in phases between 2025 and 2027.</p>
+  <p>More capacity is genuinely helpful. It reduces the single-terminal concentration risk at
+  Dahej and spreads import throughput across more points of entry. But capacity expansion solves
+  only the throughput problem, not the storage problem. A new terminal that runs at full
+  flow-through still provides zero buffer in a supply disruption. Without dedicated strategic
+  storage, whether pressurised bullets, underground caverns, or floating storage units, the
+  27-day cliff does not move.</p>
+  <p>The government's Strategic Petroleum Reserve (SPR) programme, managed by Indian Strategic
+  Petroleum Reserves Limited (ISPRL), currently stores only crude oil, at Vishakhapatnam,
+  Mangaluru, and Padur. LPG is explicitly excluded. There is no announced programme to extend
+  strategic storage to LPG. The gap between the problem's scale (2.54 MMT for 30 days, 7.61 MMT
+  for 90 days) and any current policy response remains complete.</p>
+  <div class="pullquote">
+    <p>Five new terminals will help India receive more LPG, faster. They will not help India
+    survive a month without it. Throughput capacity and strategic storage are different problems,
+    and only one of them is being addressed.</p>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD 08: TERMINAL PIPELINE ═══════════ -->
+<div class="db-outer">
+<div class="db">
+  <div class="db-section-label">Infrastructure Pipeline · 2025–2027</div>
+  <h3>LNG Terminal Expansion — Projects Under Construction</h3>
+  <p class="db-subtitle">Planned capacity additions · nameplate MMTPA · strategic storage status</p>
+
+  <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card">
+      <div class="card-label">New capacity (planned)</div>
+      <div class="card-value" style="color:#5F8DC4">+22 MMTPA</div>
+      <div class="card-sub">5 terminals</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total post-expansion</div>
+      <div class="card-value" style="color:#BA7517">64.7 MMTPA</div>
+      <div class="card-sub">nameplate capacity</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Strategic LPG storage</div>
+      <div class="card-value" style="color:#e74c3c">₹ 0</div>
+      <div class="card-sub">No programme announced</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab8-pipe" onclick="setTab8('pipe')">Terminal Pipeline</button>
+    <button class="tab" id="tab8-gap" onclick="setTab8('gap')">Storage Gap</button>
+  </div>
+
+  <div id="pnl8-pipe">
+    <div style="overflow-x:auto;margin-top:0.5rem">
+      <table>
+        <thead><tr>
+          <th style="text-align:left">Terminal</th>
+          <th>State</th>
+          <th>Capacity (MMTPA)</th>
+          <th>Developer</th>
+          <th>Expected Online</th>
+          <th>Solves Storage?</th>
+        </tr></thead>
+        <tbody id="pipeTable"></tbody>
+      </table>
+    </div>
+    <p class="note">Timelines are projected and subject to regulatory / construction delays.</p>
+  </div>
+
+  <div id="pnl8-gap" style="display:none">
+    <div class="legend" style="margin-top:0.5rem">
+      <span><span class="swatch" style="background:#BA7517"></span>Current production (12.06 MMT/yr)</span>
+      <span><span class="swatch" style="background:#e74c3c"></span>Storage needed (30-day reserve)</span>
+      <span><span class="swatch" style="background:#6B1A1A"></span>Storage needed (IEA 90-day)</span>
+    </div>
+    <div class="chart-wrap" style="height:300px"><canvas id="chart8b"></canvas></div>
+    <p class="note">Storage requirement calculated at 84,500 MT/day consumption. No existing or planned LPG strategic storage in India.</p>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════ CLOSING TEXT ═══════════ -->
+<div class="section" style="padding-bottom:2rem">
+  <h2>What the ₹10 surcharge is actually telling us</h2>
+  <p>The Hormuz closure did not create India's gas supply problem. It revealed it. The structural
+  vulnerability, 61% import dependency flowing through six terminals with no strategic reserve,
+  was always there. The war simply removed the assumption that supply chains would keep running
+  smoothly.</p>
+  <p>India's entire gas-dependent economy — 300 million households, street food vendors,
+  restaurant kitchens, PG caterers — sits on a supply chain with no shock absorber whatsoever.
+  A geopolitical disruption, a major terminal outage, or a severe weather event affecting
+  shipping routes could translate into a nationwide supply crisis within two weeks. The current
+  crisis is not a hypothetical. It is already unfolding.</p>
+  <p>The noodle shop owner raising prices is not being opportunistic. He is the first person in
+  a very long chain to feel what happens when a 61%-import-dependent system has no buffer and
+  something, somewhere, goes wrong. The PG mess reducing items, the restaurants shutting down,
+  the price boards changing: these are not isolated local events. They are the visible edge of a
+  structural national vulnerability that runs very deep, and that a closed strait has finally
+  made impossible to ignore.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Data sources</strong><br>
+  <a href="https://ppac.gov.in/consumption/products-wise">Petroleum Planning and Analysis Cell (PPAC)</a>
+  — annual LPG consumption &amp; import figures ·
+  Ministry of Petroleum &amp; Natural Gas, LNG terminal capacity data (as on 31-03-2023) ·
+  Petronet LNG Limited, Annual Report 2024-25 (Dahej utilisation &amp; throughput) ·
+  Ministry of Petroleum &amp; Natural Gas, LPG pricing notifications ·
+  Korea National Oil Corporation (KNOC), Japan METI, IEA Oil Security reports (peer reserve benchmarks) ·
+  <strong>Reuters, March 12, 2026</strong> — "India boosts LPG imports from US, Norway as Gulf supplies tighten" (Oil Minister Puri parliamentary statement; emergency powers invocation; sourcing diversification; hospitality fuel substitution) ·
+  Industry sources for import origin share and voyage time estimates.<br>
+  All monthly figures in '000 MT · Annual PPAC figures in MMT · Days-of-cover assumes zero storage (flow-through only).<br>
+  <strong>Data recency note:</strong> Monthly supply/demand figures cover Apr 2024 – Jan 2025 (10 months). February and March 2025 figures were not available at time of writing; full-year FY2024-25 totals cited are from PPAC annual releases. Peer reserve benchmarks and import origin shares are approximate from public industry sources. Crisis scenario section reflects Reuters reporting dated March 12, 2026. Arrival gap modelling is illustrative; actual cargo schedules will vary.
+</footer>
+
+<script>
+/* ── DATA ─────────────────────────────────────────────────────────── */
+const MO  = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan'];
+const DOM = [30,31,30,31,31,30,31,30,31,31];
+const PRD = [1008,1072,1037,1129,1063,951,1073,1036,1115,1158];
+const IMP = [1606,1685,1888,1900,1932,1849,1917,1816,2011,2192];
+const CON = [2545,2682,2554,2810,2833,2794,2871,2843,3068,3034];
+
+const NET = PRD.map((p,i)=>p+IMP[i]-CON[i]);
+const SUR = NET.map(v=>v>=0?v:0);
+const DEF = NET.map(v=>v<0?v:0);
+const CUM = []; let cs=0; NET.forEach(v=>{cs+=v;CUM.push(cs);});
+
+const momG = a=>a.map((v,i)=>i===0?null:parseFloat(((v-a[i-1])/a[i-1]*100).toFixed(1)));
+const pG=momG(PRD), iG=momG(IMP), cG=momG(CON);
+const iPct=IMP.map((m,i)=>parseFloat((m/(PRD[i]+m)*100).toFixed(1)));
+const pPct=PRD.map((p,i)=>parseFloat((p/(p+IMP[i])*100).toFixed(1)));
+const dCon=CON.map((c,i)=>c/DOM[i]);
+const dTA =PRD.map((p,i)=>parseFloat(((p+IMP[i])/dCon[i]).toFixed(1)));
+const dPR =PRD.map((p,i)=>parseFloat((p/dCon[i]).toFixed(1)));
+const dHA =PRD.map((p,i)=>parseFloat(((p+IMP[i]*0.5)/dCon[i]).toFixed(1)));
+
+/* ── SHARED CHART OPTS ────────────────────────────────────────────── */
+const GC='rgba(255,255,255,0.07)', TC='#888780', AC='rgba(255,255,255,0.1)';
+const TT={backgroundColor:'#2e2e26',titleColor:'#d3d1c7',bodyColor:'#a0a09a',
+          borderColor:'rgba(255,255,255,0.06)',borderWidth:1,padding:9};
+const XS=(st=false)=>({stacked:st,grid:{display:false},ticks:{autoSkip:false,font:{size:12},color:TC},border:{color:AC}});
+const YS=(lbl,st=false,ex={})=>({stacked:st,grid:{color:GC},ticks:{font:{size:11},color:TC,callback:v=>Math.abs(v)>=1000?(v/1000).toFixed(1)+'k':v},border:{display:false},title:{display:!!lbl,text:lbl||'',font:{size:11},color:TC},...ex});
+
+/* ── CARD BADGES ──────────────────────────────────────────────────── */
+function pctChg(arr){return ((arr[arr.length-1]-arr[0])/arr[0]*100).toFixed(1);}
+function badge(val){
+  const n=parseFloat(val);
+  return n>=0?`<span style="color:#E8820C">▲ ${val}%</span> Apr→Jan`
+             :`<span style="color:#c44">▼ ${Math.abs(val)}%</span> Apr→Jan`;
+}
+['prodGrowth1','impGrowth1','conGrowth1'].forEach((id,i)=>{
+  const arr=[PRD,IMP,CON][i];
+  document.getElementById(id).innerHTML=badge(pctChg(arr));
+});
+const cn1=document.getElementById('cumNet1');
+const cumTotal=NET.reduce((a,b)=>a+b,0);
+cn1.textContent=(cumTotal>=0?'+':'')+cumTotal.toLocaleString();
+cn1.style.color=cumTotal>=0?'#E8820C':'#c44';
+
+/* ── TABLE 1 ──────────────────────────────────────────────────────── */
+const tb1=document.getElementById('table1');
+MO.forEach((m,i)=>{
+  const g=v=>v===null?'<td>—</td>':`<td style="color:${v>=0?'#E8820C':'#c44'}">${v>=0?'▲':'▼'} ${Math.abs(v)}%</td>`;
+  const nc=NET[i]>=0?'#E8820C':'#c44';
+  tb1.innerHTML+=`<tr><td>${m}</td><td>${PRD[i].toLocaleString()}</td>${g(pG[i])}<td>${IMP[i].toLocaleString()}</td>${g(iG[i])}<td>${CON[i].toLocaleString()}</td>${g(cG[i])}<td style="color:${nc};font-weight:500">${NET[i]>=0?'+':''}${NET[i]}</td><td>${pPct[i]}%</td><td>${iPct[i]}%</td></tr>`;
+});
+
+/* ── TERMINAL TABLE ───────────────────────────────────────────────── */
+const termData=[
+  {name:'Dahej', state:'Gujarat',     cap:17.5,u:[105,102,88,78],fy25:96.6},
+  {name:'Kochi', state:'Kerala',      cap:5,   u:[12,17,21,19],  fy25:null},
+  {name:'Hazira',state:'Gujarat',     cap:5.2, u:[59,95,47,37],  fy25:null},
+  {name:'Dabhol',state:'Maharashtra', cap:5,   u:[65,97,85,39],  fy25:null},
+  {name:'Ennore',state:'Tamil Nadu',  cap:5,   u:[null,9,14,13], fy25:null},
+  {name:'Mundra',state:'Gujarat',     cap:5,   u:[null,30,19,16],fy25:null},
+];
+const ttb=document.getElementById('termTable');
+termData.forEach(t=>{
+  const uc=v=>{
+    if(v==null)return'<td style="color:#5f5e5a;text-align:right">—</td>';
+    const c=v<50?'#e74c3c':v<80?'#E8820C':'#2ecc71';
+    return`<td style="text-align:right"><span class="upip" style="width:${Math.round(v*0.28)}px;background:${c}"></span><span style="color:${c}">${v}%</span></td>`;
+  };
+  const fy=t.fy25!=null?`<td style="text-align:right;color:#2ecc71;font-weight:500">${t.fy25}%</td>`:'<td style="color:#5f5e5a;text-align:right">—</td>';
+  ttb.innerHTML+=`<tr><td>${t.name}</td><td style="text-align:right;color:#888780">${t.state}</td><td style="text-align:right;color:#E8820C">${t.cap}</td>${uc(t.u[0])}${uc(t.u[1])}${uc(t.u[2])}${uc(t.u[3])}${fy}</tr>`;
+});
+
+/* ── CHARTS ───────────────────────────────────────────────────────── */
+const charts={};
+function mk(id,cfg){if(!charts[id]){charts[id]=new Chart(document.getElementById(id),cfg);}}
+
+/* dashboard 1 */
+const cfg1={
+  stack:{type:'bar',data:{labels:MO,datasets:[
+    {label:'Production',data:PRD,backgroundColor:'#BA7517',stack:'s',borderRadius:0},
+    {label:'Imports',   data:IMP,backgroundColor:'#E8820C',stack:'s',borderRadius:0},
+    {label:'Surplus',   data:SUR,backgroundColor:'#F5C842',stack:'s',borderRadius:3},
+    {label:'Deficit',   data:DEF,backgroundColor:'#6B1A1A',stack:'s',borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>c.parsed.y===0?null:` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`,afterBody:items=>{const i=items[0].dataIndex;return['',`Net: ${NET[i]>=0?'+':''}${NET[i].toLocaleString()} '000 MT`];}}}},scales:{x:XS(true),y:YS("'000 MT",true)}}},
+  growth:{type:'line',data:{labels:MO,datasets:[
+    {label:'Production',data:pG,borderColor:'#BA7517',backgroundColor:'rgba(186,117,23,0.12)',tension:0.3,pointRadius:4,pointBackgroundColor:'#BA7517',pointBorderColor:'#1a1a18',pointBorderWidth:2,fill:true},
+    {label:'Imports',   data:iG,borderColor:'#E8820C',backgroundColor:'rgba(232,130,12,0.10)',tension:0.3,pointRadius:4,pointBackgroundColor:'#E8820C',pointBorderColor:'#1a1a18',pointBorderWidth:2,fill:true},
+    {label:'Consumption',data:cG,borderColor:'#5F8DC4',backgroundColor:'rgba(95,141,196,0.08)',tension:0.3,pointRadius:4,pointBackgroundColor:'#5F8DC4',pointBorderColor:'#1a1a18',pointBorderWidth:2,fill:true}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>c.parsed.y===null?null:` ${c.dataset.label}: ${c.parsed.y>0?'+':''}${c.parsed.y}%`}}},scales:{x:XS(),y:{grid:{color:GC},ticks:{font:{size:11},color:TC,callback:v=>v+'%'},border:{display:false},title:{display:true,text:'Month-on-month %',font:{size:11},color:TC}}}}},
+  pct:{type:'bar',data:{labels:MO,datasets:[
+    {label:'Production %',data:pPct,backgroundColor:'#BA7517',stack:'p',borderRadius:0},
+    {label:'Imports %',   data:iPct,backgroundColor:'#E8820C',stack:'p',borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`}}},scales:{x:XS(true),y:YS('% of total supply',true,{min:0,max:100})}}}
+};
+
+function setTab1(tab){
+  ['stack','growth','pct'].forEach(t=>{
+    document.getElementById('tab1-'+t).className='tab'+(t===tab?' active':'');
+    document.getElementById('leg1-'+t).style.display=t===tab?'flex':'none';
+  });
+  if(charts.chart1)charts.chart1.destroy();
+  charts.chart1=new Chart(document.getElementById('chart1'),JSON.parse(JSON.stringify(cfg1[tab])));
+}
+setTab1('stack');
+
+/* dashboard 2 */
+function setTab2(tab){
+  ['cap','trend','table'].forEach(t=>{
+    document.getElementById('tab2-'+t).className='tab'+(t===tab?' active':'');
+    document.getElementById('pnl2-'+t).style.display=t===tab?'':'none';
+  });
+  if(tab==='cap'&&!charts.chart2a){
+    const tN=['Dahej','Kochi','Hazira','Dabhol','Ennore','Mundra'];
+    const tC=[17.5,5,5.2,5,5,5],tU22=[78,19,37,39,13,16],tU25=[96.6,null,null,null,null,null];
+    mk('chart2a',{type:'bar',data:{labels:tN,datasets:[
+      {label:'Capacity',data:tC,backgroundColor:'#BA7517',borderRadius:3,yAxisID:'y'},
+      {label:'2022-23 util%',data:tU22,type:'line',borderColor:'#5F8DC4',backgroundColor:'rgba(95,141,196,0.06)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#5F8DC4',fill:true,tension:0.2,yAxisID:'y2'},
+      {label:'FY2024-25',data:tU25,type:'line',borderColor:'#2ecc71',borderWidth:0,pointRadius:8,pointBackgroundColor:'#2ecc71',pointBorderColor:'#1a1a18',pointBorderWidth:2,fill:false,yAxisID:'y2'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{x:XS(),y:YS('MMTPA'),y2:{position:'right',grid:{display:false},ticks:{color:'#5F8DC4',font:{size:11},callback:v=>v+'%'},border:{display:false},min:0,max:120}}}});
+  }
+  if(tab==='trend'&&!charts.chart2b){
+    const dY=['FY17-18','FY18-19','FY19-20','FY20-21','FY21-22','FY22-23','FY23-24','FY24-25'];
+    const dU=[105,107,102,94,88,78,95.5,96.6];
+    mk('chart2b',{type:'bar',data:{labels:dY,datasets:[
+      {label:'Utilisation %',data:dU,backgroundColor:dU.map((v,i)=>i===7?'#2ecc71':'#BA7517'),borderRadius:3},
+      {label:'100%',data:Array(8).fill(100),type:'line',borderColor:'rgba(245,200,66,0.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`}}},scales:{x:XS(),y:YS('%',false,{min:0,max:120})}}});
+  }
+}
+setTab2('cap');
+
+/* dashboard 3 */
+function setTab3(tab){
+  ['stack','net','cum'].forEach(t=>{
+    document.getElementById('tab3-'+t).className='tab'+(t===tab?' active':'');
+    document.getElementById('pnl3-'+t).style.display=t===tab?'':'none';
+  });
+  if(tab==='stack'&&!charts.chart3a){
+    mk('chart3a',{type:'bar',data:{labels:MO,datasets:[
+      {label:'Production',data:PRD,backgroundColor:'#BA7517',stack:'s',borderRadius:0},
+      {label:'Imports',   data:IMP,backgroundColor:'#E8820C',stack:'s',borderRadius:0},
+      {label:'Surplus',   data:SUR,backgroundColor:'#F5C842',stack:'s',borderRadius:3},
+      {label:'Deficit',   data:DEF,backgroundColor:'#6B1A1A',stack:'s',borderRadius:3},
+      {label:'Consumption',data:CON,type:'line',borderColor:'rgba(231,76,60,0.7)',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false,tension:0.3}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>c.parsed.y===0?null:` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`,afterBody:items=>{const i=items[0].dataIndex;return['',`Net: ${NET[i]>=0?'+':''}${NET[i]} '000 MT`];}}}},scales:{x:XS(true),y:YS("'000 MT",true)}}});
+  }
+  if(tab==='net'&&!charts.chart3b){
+    mk('chart3b',{type:'bar',data:{labels:MO,datasets:[
+      {label:'Net',data:NET,backgroundColor:NET.map(v=>v>=0?'rgba(46,204,113,0.8)':'rgba(192,57,43,0.8)'),borderRadius:3}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` Net: ${c.parsed.y>=0?'+':''}${c.parsed.y} '000 MT`}}},scales:{x:XS(),y:{grid:{color:GC},ticks:{font:{size:11},color:TC,callback:v=>v>=0?'+'+v:v},border:{display:false}}}}});
+  }
+  if(tab==='cum'&&!charts.chart3c){
+    mk('chart3c',{type:'line',data:{labels:MO,datasets:[
+      {label:'Cumulative surplus',data:CUM,borderColor:'#F5C842',backgroundColor:'rgba(245,200,66,0.06)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#F5C842',pointBorderColor:'#1a1a18',pointBorderWidth:2,fill:true,tension:0.3}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` Cumulative: ${c.parsed.y.toLocaleString()} '000 MT`}}},scales:{x:XS(),y:YS("'000 MT")}}});
+  }
+}
+setTab3('stack');
+
+/* dashboard 4 */
+function setTab4(tab){
+  ['days','cliff'].forEach(t=>{
+    document.getElementById('tab4-'+t).className='tab'+(t===tab?' active':'');
+    document.getElementById('pnl4-'+t).style.display=t===tab?'':'none';
+  });
+  if(tab==='days'&&!charts.chart4a){
+    mk('chart4a',{type:'bar',data:{labels:MO,datasets:[
+      {label:'Sc-A (prod+imp)',data:dTA,backgroundColor:'#BA7517',borderRadius:3,barPercentage:0.75},
+      {label:'Sc-B (50% imp)', data:dHA,backgroundColor:'#E8820C',borderRadius:3,barPercentage:0.75},
+      {label:'Sc-C (no imp)',  data:dPR,backgroundColor:'#c0392b',borderRadius:3,barPercentage:0.75},
+      {label:'30-day',data:Array(10).fill(30),type:'line',borderColor:'rgba(245,200,66,0.5)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y} days`}}},scales:{x:XS(),y:YS('Days',false,{min:0})}}});
+  }
+  if(tab==='cliff'&&!charts.chart4b){
+    const dC=30.855/365,dP=12.059/365,BUF=1.404,SF=dC-dP;
+    const cL=[],cPr=[],cBf=[],cUm=[];
+    for(let d=1;d<=60;d++){
+      cL.push('D'+d);
+      cPr.push(parseFloat((dP*1000).toFixed(2)));
+      const bl=Math.max(0,BUF*1000-SF*1000*(d-1));
+      cBf.push(parseFloat(Math.min(SF*1000,bl).toFixed(2)));
+      cUm.push(bl<=0?parseFloat((SF*1000).toFixed(2)):0);
+    }
+    mk('chart4b',{type:'bar',data:{labels:cL,datasets:[
+      {label:'Domestic production',data:cPr, backgroundColor:'#2ecc71',stack:'c',borderRadius:0},
+      {label:'Buffer drawn',       data:cBf, backgroundColor:'#E8820C',stack:'c',borderRadius:0},
+      {label:'Unmet demand',       data:cUm, backgroundColor:'rgba(192,57,43,0.75)',stack:'c',borderRadius:0},
+      {label:'Full demand',data:Array(60).fill(parseFloat((dC*1000).toFixed(2))),type:'line',borderColor:'rgba(245,200,66,0.4)',borderWidth:1,borderDash:[4,3],pointRadius:0,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>c.parsed.y===0?null:` ${c.dataset.label}: ${c.parsed.y.toFixed(1)} '000 MT/day`}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:TC,font:{size:11},maxTicksLimit:12},border:{color:AC}},y:YS("'000 MT/day",true)}}});
+  }
+}
+setTab4('days');
+
+/* ── DASHBOARD 6: SOURCING + TRANSIT ─────────────────────────────── */
+(function(){
+  const sources=[
+    {origin:'Saudi Arabia / Kuwait',region:'Gulf',days:[8,12],color:'#e74c3c',status:'DISRUPTED'},
+    {origin:'Qatar',region:'Gulf / Cape route',days:[10,15],color:'#888780',status:'PARTIAL'},
+    {origin:'Nigeria / W. Africa',region:'Atlantic / Cape',days:[18,25],color:'#6a6a60',status:'AVAILABLE'},
+    {origin:'Russia',region:'Arctic / Pacific',days:[20,28],color:'#2ecc71',status:'SECURING'},
+    {origin:'United States',region:'Atlantic / Pacific',days:[30,40],color:'#5F8DC4',status:'SECURING'},
+    {origin:'Norway',region:'Atlantic / Suez',days:[35,42],color:'#BA7517',status:'SECURING'},
+    {origin:'Canada',region:'Pacific',days:[38,45],color:'#c0a84f',status:'SECURING'},
+  ];
+
+  // Sort ascending by midpoint so shortest routes are at top
+  sources.sort((a,b)=>(a.days[0]+a.days[1])-(b.days[0]+b.days[1]));
+
+  function setTab6(tab){
+    ['transit','share','gap'].forEach(t=>{
+      document.getElementById('tab6-'+t).className='tab'+(t===tab?' active':'');
+      document.getElementById('pnl6-'+t).style.display=t===tab?'':'none';
+    });
+
+    if(tab==='transit'&&!charts.chart6transit){
+      const labels=sources.map(s=>s.origin);
+      const floatData=sources.map(s=>([s.days[0], s.days[1]]));
+      const colors=sources.map(s=>s.color);
+      const RUNWAY=27;
+
+      charts.chart6transit=new Chart(document.getElementById('chart6transit'),{
+        type:'bar',
+        data:{
+          labels,
+          datasets:[
+            {
+              label:'Voyage days (range)',
+              data:floatData,
+              backgroundColor:sources.map(s=>s.status==='DISRUPTED'?'rgba(231,76,60,0.25)':s.color+'cc'),
+              borderColor:colors,
+              borderWidth:1.5,
+              borderRadius:3,
+              borderSkipped:false,
+            }
+          ]
+        },
+        options:{
+          indexAxis:'y',
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              ...TT,
+              callbacks:{
+                label:c=>{
+                  const s=sources[c.dataIndex];
+                  return ` ${s.origin}: ${s.days[0]}–${s.days[1]} days (${s.status})`;
+                }
+              }
+            }
+          },
+          scales:{
+            x:{
+              min:0, max:50,
+              grid:{color:GC},
+              ticks:{font:{size:11},color:TC,callback:v=>v+'d'},
+              border:{display:false},
+              title:{display:true,text:'Voyage days to Indian west-coast terminal',font:{size:11},color:TC}
+            },
+            y:{
+              grid:{display:false},
+              ticks:{
+                font:{size:12},
+                color:sources.map(s=>s.status==='DISRUPTED'?'#e74c3c':s.status==='SECURING'?'#d3d1c7':'#888780'),
+                crossAlign:'far',
+              },
+              border:{color:'rgba(255,255,255,0.1)'}
+            }
+          }
+        },
+        plugins:[{
+          id:'runwayLine',
+          afterDraw(chart){
+            const {ctx,chartArea,scales}=chart;
+            const x=scales.x.getPixelForValue(RUNWAY);
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle='rgba(231,76,60,0.85)';
+            ctx.lineWidth=1.5;
+            ctx.setLineDash([5,4]);
+            ctx.moveTo(x,chartArea.top);
+            ctx.lineTo(x,chartArea.bottom);
+            ctx.stroke();
+            ctx.font=`500 10px 'JetBrains Mono', monospace`;
+            ctx.fillStyle='#e74c3c';
+            ctx.textAlign='center';
+            ctx.fillText('27d runway',x,chartArea.top-6);
+            ctx.restore();
+          }
+        }]
+      });
+    }
+
+    if(tab==='share'&&!charts.chart6b){
+      mk('chart6b',{type:'bar',data:{
+        labels:['Gulf\n(Saudi/Kuwait)','USA','Russia','Norway /\nCanada','Qatar','Nigeria /\nOthers'],
+        datasets:[
+          {label:'Pre-crisis share (%)',data:[60,22,0,0,8,10],backgroundColor:'rgba(255,255,255,0.08)',borderColor:'rgba(255,255,255,0.15)',borderWidth:1,borderRadius:3},
+          {label:'Emergency target (%)',data:[0,35,20,15,10,20],backgroundColor:['#e74c3c','#5F8DC4','#2ecc71','#BA7517','#888780','#6a6a60'].map(c=>c+'cc'),borderRadius:3}
+        ]
+      },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`}}},scales:{x:XS(),y:YS('Share of imports (%)',false,{min:0,max:70})}}});
+    }
+
+    if(tab==='gap'&&!charts.chart6c){
+      const days60=Array.from({length:60},(_,i)=>i===0?'Day 1':i===6?'Day 7':i===13?'Day 14':i===20?'Day 21':i===23?'Day 24':i===27?'Day 28':i===34?'Day 35':i===41?'Day 42':i===48?'Day 49':i===59?'Day 60':'');
+      const dCon=33150000/365/1000;
+      const dProd=12059000/365/1000;
+      const BUF=1404;
+      const deficit=dCon-dProd;
+      let buf=BUF;
+      const prod=[],bufDraw=[],unmet=[],rusImp=[],usImp=[];
+      for(let d=1;d<=60;d++){
+        prod.push(parseFloat(dProd.toFixed(2)));
+        const drawn=Math.min(deficit,Math.max(0,buf));
+        buf=Math.max(0,buf-deficit);
+        bufDraw.push(parseFloat(drawn.toFixed(2)));
+        const gap=deficit-drawn;
+        unmet.push(parseFloat((gap>0?gap:0).toFixed(2)));
+        rusImp.push(d>=24?parseFloat((dCon*0.15).toFixed(2)):null);
+        usImp.push(d>=35?parseFloat((dCon*0.40).toFixed(2)):null);
+      }
+      mk('chart6c',{type:'bar',data:{labels:days60,datasets:[
+        {label:'Domestic production',data:prod,backgroundColor:'#2ecc71',stack:'s',borderRadius:0},
+        {label:'Buffer drawn',data:bufDraw,backgroundColor:'#E8820C',stack:'s',borderRadius:0},
+        {label:'Unmet demand',data:unmet,backgroundColor:'rgba(192,57,43,0.75)',stack:'s',borderRadius:0},
+        {label:'Russia imports (est.)',data:rusImp,backgroundColor:'rgba(46,204,113,0.5)',stack:'s',borderRadius:0},
+        {label:'US imports (est.)',data:usImp,backgroundColor:'rgba(95,141,196,0.5)',stack:'s',borderRadius:0},
+        {label:'Full demand',data:Array(60).fill(parseFloat(dCon.toFixed(2))),type:'line',borderColor:'rgba(245,200,66,0.4)',borderWidth:1,borderDash:[4,3],pointRadius:0,fill:false}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>c.parsed.y===0||c.parsed.y===null?null:` ${c.dataset.label}: ${c.parsed.y.toFixed(1)} '000 MT/day`}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:TC,font:{size:11},maxTicksLimit:15},border:{color:AC}},y:YS("'000 MT/day",true)}}});
+    }
+  }
+  window.setTab6=setTab6;
+  setTab6('transit');
+})();
+
+/* ── DASHBOARD 7: PEER COMPARISON ────────────────────────────────── */
+(function(){
+  const peers=['Japan','South Korea','China','IEA Standard','India'];
+  const days=[50,40,35,90,0];
+  const colors=['#2ecc71','#2ecc71','#E8820C','rgba(245,200,66,0.5)','#e74c3c'];
+  mk('chart7a',{type:'bar',data:{labels:peers,datasets:[
+    {label:'Reserve days',data:days,backgroundColor:colors,borderRadius:4,barPercentage:0.6}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` ${c.label}: ${c.parsed.y} days`}}},scales:{x:XS(),y:YS('Days of consumption',false,{min:0,max:100})}}});
+})();
+
+/* ── DASHBOARD 8: TERMINAL PIPELINE ─────────────────────────────── */
+(function(){
+  const pipe=[
+    {name:'Chhara',state:'Gujarat',cap:5,dev:'Tortoise Energy',yr:'2025–26',storage:'No'},
+    {name:'Jaigarh',state:'Maharashtra',cap:4,dev:'H-Energy',yr:'2026',storage:'No'},
+    {name:'Kamarajar',state:'Tamil Nadu',cap:5,dev:'TIDCO / TPVL',yr:'2026–27',storage:'No'},
+    {name:'Ennore Expansion',state:'Tamil Nadu',cap:3,dev:'IOC',yr:'2025',storage:'No'},
+    {name:'Jafrabad',state:'Gujarat',cap:5,dev:'Swan Energy',yr:'2026–27',storage:'No'},
+  ];
+  const tb=document.getElementById('pipeTable');
+  pipe.forEach(p=>{
+    tb.innerHTML+=`<tr>
+      <td>${p.name}</td>
+      <td style="text-align:right;color:#888780">${p.state}</td>
+      <td style="text-align:right;color:#5F8DC4">${p.cap} MMTPA</td>
+      <td style="text-align:right;color:#888780">${p.dev}</td>
+      <td style="text-align:right;color:#E8820C">${p.yr}</td>
+      <td style="text-align:right;color:#e74c3c">${p.storage}</td>
+    </tr>`;
+  });
+
+  function setTab8(tab){
+    ['pipe','gap'].forEach(t=>{
+      document.getElementById('tab8-'+t).className='tab'+(t===tab?' active':'');
+      document.getElementById('pnl8-'+t).style.display=t===tab?'':'none';
+    });
+    if(tab==='gap'&&!charts.chart8b){
+      mk('chart8b',{type:'bar',data:{
+        labels:['Annual Production (MMT)','30-day Reserve Need','90-day IEA Reserve Need'],
+        datasets:[{data:[12.06,2.54,7.61],backgroundColor:['#BA7517','#e74c3c','#6B1A1A'],borderRadius:4,barPercentage:0.5}]
+      },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>` ${c.label}: ${c.parsed.y} MMT`}}},scales:{x:XS(),y:YS('MMT')}}});
+    }
+  }
+  window.setTab8=setTab8;
+  setTab8('pipe');
+})();
+
+/* meters */
+setTimeout(()=>{
+  document.getElementById('mA').style.width='37.8%';
+  document.getElementById('mB').style.width='22.2%';
+  document.getElementById('mC').style.width='30.0%';
+},700);
+</script>
+</body>
+</html>
